@@ -36,7 +36,7 @@ def verify_password(user, password):
     """ Checks whether the password is correct for a given user """
     return user.pw_hash == encrypt(password, user.salt)
 
-def create_user(email, password):
+def create_user(first_name, last_name, email, password):
     """ Handy function to create a new user """
 
     # Generate a random 32-byte salt
@@ -45,4 +45,4 @@ def create_user(email, password):
     pw_hash = encrypt(password, salt)
 
     # Create the new User object
-    return User(email, pw_hash, salt)
+    return User(first_name, last_name, email, pw_hash, salt)
