@@ -416,4 +416,50 @@ def remove_location():
         # Redirect to settings page
         return redirect(url_for('admin'))
 
+@app.route('/admin/rooms/<room_id>', methods=['GET','POST'])
+@login_required
+def edit_room(room_id):
+    """ Allows an admin to edit a room in the system """
+
+    # Verify that the room was specified
+    if not room_id:
+        flash("Must specify a room.")
+        return render_template(url_for('admin'))
+
+    # Query for the room
+    room = Room.query.filter_by(id=room_id).first()
+
+    # Ensure that room exists
+    if not room:
+        flash("Room does not exist.")
+        return render_template(url_for('admin'))
+
+    # User is requesting form
+    if request.method == 'GET':
+
+        # Render page to user
+        return render_template('edit_room.html', room=room)
+
+    # User is submitting form data
+    else:
+        # Get the name supplied
+        name = request.args.get('room_name')
+
+        # Verify that the name was specified
+        if not name:
+            flash("Must specify a room name.")
+            return render_template('edit_room.html', room=room)
+
+        # Updat the room name
+        room.name = name
+        # Commit the changes to the database
+        db.session.commit()
+
+        # Dispaly success message
+        flash('Room "' + room.name + '" Deleted Successfully.')
+
+        # Redirect to settings page
+        return redirect(url_for('admin'))
+
+
 # TODO -- edit location
