@@ -242,7 +242,7 @@ def add_room():
         flash("Room \'" + name "\' created successfully.")
         return redirect(url_for('admin'))
 
-@app.route('/admin/add-user', methods=['GET','POST'])
+@app.route('/admin/add/user', methods=['GET','POST'])
 @login_required
 def add_user():
     """ Allows an admin to add users to the system """
@@ -278,9 +278,9 @@ def add_user():
 
         return redirect(url_for('admin'))
 
-@app.route('/admin/delete-user', methods=['GET','POST'])
+@app.route('/admin/remove/user', methods=['GET','POST'])
 @login_required
-def delete_user():
+def remove_user():
     """ Allows an admin to remove users from the system """
 
     # User is requesting form
@@ -289,7 +289,7 @@ def delete_user():
         users = User.query.all()
 
         # Render page to user
-        return render_template('delete_user.html', users=users)
+        return render_template('remove_user.html', users=users)
 
     # User is submitting form data
     else:
@@ -299,7 +299,7 @@ def delete_user():
         # Verify that the user was specified
         if not email:
             flash("Must specify a user.")
-            return render_template("delete_user.html")
+            return render_template("remove_user.html")
 
         # Query for the user
         user = User.query.filter_by(email=email).first()
@@ -307,12 +307,12 @@ def delete_user():
         # Ensure that user exists
         if not user:
             flash("User does not exist.")
-            return render_template("delete_user.html")
+            return render_template("remove_user.html")
 
         # Ensure that user is not deleting their own account
         if user == current_user:
             flash("Cannot delete current user account.")
-            return render_template("delete_user.html")
+            return render_template("remove_user.html")
 
         # Remove the user from the database
         db.session.delete(user)
@@ -324,9 +324,9 @@ def delete_user():
         # Redirect to settings page
         return redirect(url_for('admin'))
 
-@app.route('/admin/delete-room', methods=['GET','POST'])
+@app.route('/admin/remove/room', methods=['GET','POST'])
 @login_required
-def delete_room():
+def remove_room():
     """ Allows an admin to remove rooms from the system """
 
     # User is requesting form
@@ -335,7 +335,7 @@ def delete_room():
         rooms = Room.query.all()
 
         # Render page to user
-        return render_template('delete_room.html', rooms=rooms)
+        return render_template('remove_room.html', rooms=rooms)
 
     # User is submitting form data
     else:
@@ -345,7 +345,7 @@ def delete_room():
         # Verify that the room was specified
         if not room_id:
             flash("Must specify a room.")
-            return render_template("delete_room.html")
+            return render_template("remove_room.html")
 
         # Query for the room
         room = Room.query.filter_by(id=room_id).first()
@@ -353,7 +353,7 @@ def delete_room():
         # Ensure that room exists
         if not room:
             flash("Room does not exist.")
-            return render_template("delete_room.html")
+            return render_template("remove_room.html")
 
         # Remove the room from the database
         db.session.delete(room)
@@ -365,9 +365,9 @@ def delete_room():
         # Redirect to settings page
         return redirect(url_for('admin'))
 
-@app.route('/admin/delete-location', methods=['GET','POST'])
+@app.route('/admin/remove/location', methods=['GET','POST'])
 @login_required
-def delete_location():
+def remove_location():
     """ Allows an admin to remove locations and all rooms contained in that
         location from the system """
 
@@ -377,7 +377,7 @@ def delete_location():
         locations = Location.query.all()
 
         # Render page to user
-        return render_template('delete_location.html', locations=locations)
+        return render_template('remove_location.html', locations=locations)
 
     # User is submitting form data
     else:
@@ -387,7 +387,7 @@ def delete_location():
         # Verify that the location was specified
         if not location_id:
             flash("Must specify a location.")
-            return render_template("delete_location.html")
+            return render_template("remove_location.html")
 
         # Query for the location
         location = Location.query.filter_by(id=location_id).first()
@@ -395,7 +395,7 @@ def delete_location():
         # Ensure that location exists
         if not location:
             flash("Location does not exist.")
-            return render_template("delete_location.html")
+            return render_template("remove_location.html")
 
         # Get all rooms contained in that location
         rooms = location.rooms
