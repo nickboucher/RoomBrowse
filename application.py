@@ -9,6 +9,7 @@
 from flask import Flask, render_template, session, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
+from os.path import exists
 
 # Initialize the Flask application
 app = Flask(__name__)
@@ -178,7 +179,7 @@ def add_location():
         db.session.add(location)
         db.session.commit()
         # Notify user and render admin page
-        flash("Location \'" + name "\' created successfully.")
+        flash("Location \'" + name + "\' created successfully.")
         return redirect(url_for('admin'))
 
 @app.route('/admin/add/room', methods=['GET', 'POST'])
@@ -239,7 +240,7 @@ def add_room():
         db.session.add(room)
         db.session.commit()
         # Notify user and render admin page
-        flash("Room \'" + name "\' created successfully.")
+        flash("Room \'" + name + "\' created successfully.")
         return redirect(url_for('admin'))
 
 @app.route('/admin/add/user', methods=['GET','POST'])
@@ -495,7 +496,7 @@ def edit_room(room_id):
 
 @app.route('/admin/locations/<location_id>', methods=['GET','POST'])
 @login_required
-def edit_room(location_id):
+def edit_location(location_id):
     """ Allows an admin to edit a location in the system """
 
     # Verify that the location was specified

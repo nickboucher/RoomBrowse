@@ -44,7 +44,7 @@ class Room(db.Model):
     def __repr__(self):
         return '<Room %r>' % self.name
 
-class Location(db.Model)
+class Location(db.Model):
     """ Locations in which `Room`s are housed """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, unique=True)
