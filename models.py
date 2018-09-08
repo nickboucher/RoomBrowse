@@ -24,7 +24,6 @@ class Room(db.Model):
     # General Roon Info
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, unique=True)
-    location = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text)
     capacity = db.Column(db.Integer, nullable=False)
     # Booking contact info

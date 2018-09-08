@@ -429,6 +429,9 @@ def edit_room(room_id):
     # Query for the room
     room = Room.query.filter_by(id=room_id).first()
 
+    # Get list of all locations
+    locations = Location.query.all()
+
     # Ensure that room exists
     if not room:
         flash("Room does not exist.")
@@ -438,17 +441,91 @@ def edit_room(room_id):
     if request.method == 'GET':
 
         # Render page to user
-        return render_template('edit_room.html', room=room)
+        return render_template('edit_room.html', room=room, locations=locations)
 
     # User is submitting form data
     else:
         # Get the name supplied
-        name = request.args.get('room_name')
-
+        name = request.args.get('name')
         # Verify that the name was specified
         if not name:
             flash("Must specify a room name.")
-            return render_template('edit_room.html', room=room)
+            return render_template('edit_room.html', room=room, locations=locations)
+        # Verify that capacity is an int
+        capacity = request.args.get('capacity')
+        if not capacity:
+            flash("Must specify a room capacity.")
+            return render_template('edit_room.html', room=room, locations=locations)
+        else:
+            try:
+                capacity = int(capacity)
+            except ValueError:
+                flash("Room capacity must be an integer.")
+                return render_template('edit_room.html', room=room, locations=locations)
+        # Get the other, optional fields
+        description = request.args.get('description')
+        booking_contact = request.args.get('booking_contact')
+        booking_email = request.args.get('booking_email')
+        # Verify that the location exists
+        location_id = request.args.get('location_id')
+        # Query for the location
+        location = Location.query.filter_by(id=location_id).first()
+        # Ensure that location exists
+        if not location:
+            flash("Location does not exist.")
+            return render_template('edit_room.html', room=room, locations=locations)
+
+        # TODO: edit images
+
+        # Update the room's database values
+        room.name = name
+        room.capacity = capacity
+        room.description = description
+        room.booking_contact = booking_contact
+        room.booking_email = booking_email
+        room.location = location
+        # Commit the changes to the database
+        db.session.commit()
+
+        # Dispaly success message
+        flash('Room "' + room.name + '" Updated Successfully.')
+
+        # Redirect to settings page
+        return redirect(url_for('admin'))
+
+@app.route('/admin/locations/<location_id>', methods=['GET','POST'])
+@login_required
+def edit_room(location_id):
+    """ Allows an admin to edit a location in the system """
+
+    # Verify that the location was specified
+    if not location_id:
+        flash("Must specify a location.")
+        return render_template(url_for('admin'))
+
+    # Query for the location
+    location= Location.query.filter_by(id=location_id).first()
+
+    # Ensure that location exists
+    if not location:
+        flash("Location does not exist.")
+        return render_template(url_for('admin'))
+
+    # User is requesting form
+    if request.method == 'GET':
+
+        # Render page to user
+        return render_template('edit_location.html', location=location)
+
+    # User is submitting form data
+    else:
+        # Get the name supplied
+        name = request.args.get('location_name')
+
+        # Verify that the name was specified
+        if not name:
+            flash("Must specify a location name.")
+            return render_template('edit_location.html', location=location)
 
         # Updat the room name
         room.name = name
@@ -460,6 +537,3 @@ def edit_room(room_id):
 
         # Redirect to settings page
         return redirect(url_for('admin'))
-
-
-# TODO -- edit location
